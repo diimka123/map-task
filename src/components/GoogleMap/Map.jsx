@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { compose, withProps, lifecycle } from 'recompose'
+import { compose, withProps } from 'recompose'
 import {
    withScriptjs,
    withGoogleMap,
@@ -9,7 +9,7 @@ import {
 
 const MapWithADirectionsRenderer = compose(
    withProps({
-      googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyApNd4_MnUJYsREwr0SiOpBxMoACIfVoV4",
+      googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyApNd4_MnUJYsREwr0SiOpBxMoACIfVoV4&libraries=places",
       loadingElement: <div style={{ height: `100%` }} />,
       containerElement: <div style={{ height: `400px` }} />,
       mapElement: <div style={{ height: `100%` }} />,
@@ -17,10 +17,11 @@ const MapWithADirectionsRenderer = compose(
    withScriptjs,
    withGoogleMap,
 )(({ routers }) => {
+
    const [directions, setDirections] = useState(null)
 
    useEffect(() => {
-
+      console.log(routers)
       const DirectionsService = new window.google.maps.DirectionsService();
 
       let waypoints = null;
@@ -54,7 +55,7 @@ const MapWithADirectionsRenderer = compose(
    return (
       <GoogleMap
          defaultZoom={10}
-         defaultCenter={new window.google.maps.LatLng('53.9', '27.56667')}
+         defaultCenter={new window.google.maps.LatLng({lat: 53.9, lng: 27.56667})}
       >
          {directions && <DirectionsRenderer directions={directions} />}
       </GoogleMap>
