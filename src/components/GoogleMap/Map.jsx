@@ -3,16 +3,15 @@ import GoogleMapReact from 'google-map-react';
 
 function Map({ routers }) {
 
-   const [directions, setDirections] = useState(null);
-   const [mapObject, setMapObject] = useState(null);
    const [mapsObject, setMapsObject] = useState(null);
 
    useEffect(() => {
 
       if (routers.length >= 2) {
 
-         const directionsService = new mapsObject.DirectionsService();
-         const directionsDisplay = new mapsObject.DirectionsRenderer();
+         const directionsService = new mapsObject.maps.DirectionsService();
+         const directionsDisplay = new mapsObject.maps.DirectionsRenderer();
+         directionsDisplay.setOptions({});
 
          const waypoints = routers.map(route => ({
             location: route.description,
@@ -32,9 +31,11 @@ function Map({ routers }) {
                if (status === window.google.maps.DirectionsStatus.OK) {
                   directionsDisplay.setDirections(result);
                   const routePolyline = new window.google.maps.Polyline({
-                     path: result.routes[0].overview_path
+                     path: result.routes[0].overview_path,
+                     strokeColor: '#1A89EE',
+                     strokeOpacity: 0.9
                   });
-                  routePolyline.setMap(mapObject);
+                  routePolyline.setMap(mapsObject.map);
                } else {
                   console.error(`error fetching directions ${result}`);
                }
@@ -52,8 +53,7 @@ function Map({ routers }) {
             defaultZoom={10}
             yesIWantToUseGoogleMapApiInternals
             onGoogleApiLoaded={({ map, maps }) => {
-               setMapObject(map);
-               setMapsObject(maps);
+               setMapsObject({map, maps});
             }}>
          </GoogleMapReact>
       </div>
