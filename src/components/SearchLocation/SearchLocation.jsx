@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SearchLocation({ routers, setRouters }) {
    const classes = useStyles();
-   const [value, setValue] = useState(null);
+
    const [inputValue, setInputValue] = useState('');
    const [options, setOptions] = useState([]);
 
@@ -42,6 +42,7 @@ function SearchLocation({ routers, setRouters }) {
    );
 
    useEffect(() => {
+      
       let active = true;
 
       if (!autocompleteService.current && window.google) {
@@ -51,32 +52,24 @@ function SearchLocation({ routers, setRouters }) {
          return undefined;
       }
 
-      if (inputValue === '') {
-         setOptions(value ? [value] : []);
-         return undefined;
+      if (inputValue) {
+         fetch({ input: inputValue }, (results) => {
+            if (active) {
+               let newOptions = [];
+         
+               if (results) {
+                  newOptions = [...newOptions, ...results];
+               }
+   
+               setOptions(newOptions);
+            }
+         });
       }
-
-      fetch({ input: inputValue }, (results) => {
-         if (active) {
-            let newOptions = [];
-
-            if (value) {
-               newOptions = [value];
-            }
-      
-            if (results) {
-               newOptions = [...newOptions, ...results];
-            }
-
-            setOptions(newOptions);
-         }
-      });
 
       return () => {
          active = false;
       };
-
-   }, [value, inputValue, fetch]);
+   }, [inputValue, fetch]);
 
    return (
       <Autocomplete
@@ -92,13 +85,12 @@ function SearchLocation({ routers, setRouters }) {
          blurOnSelect={true}
          clearOnBlur={true}
          onChange={(event, newValue) => {
-            setOptions(newValue ? [newValue, ...options] : options);
-            setValue(newValue);
             setRouters([...routers, newValue])
          }}
          onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
          }}
+         onBlur={() => { setOptions([]) }}
          renderInput={(params) => (
             <TextField {...params}
                label="Add a new point..."
