@@ -1,67 +1,69 @@
-import React, { useState, useEffect } from 'react'
-import { compose, withProps } from 'recompose'
-import {
-   withScriptjs,
-   withGoogleMap,
-   GoogleMap,
-   DirectionsRenderer,
-} from 'react-google-maps'
+import React, { useState, useEffect, useRef } from 'react'
+import GoogleMapReact from 'google-map-react';
 
-const MapWithADirectionsRenderer = compose(
-   withProps({
-      googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyApNd4_MnUJYsREwr0SiOpBxMoACIfVoV4&libraries=places",
-      loadingElement: <div style={{ height: `100%` }} />,
-      containerElement: <div style={{ height: `400px` }} />,
-      mapElement: <div style={{ height: `100%` }} />,
-   }),
-   withScriptjs,
-   withGoogleMap,
-)(({ routers }) => {
+function Map({ routers }) {
 
-   const [directions, setDirections] = useState(null)
+   const [mapsObject, setMapsObject] = useState(null);
+   const directionsDisplay = useRef(null);
 
    useEffect(() => {
-      console.log(routers)
       const DirectionsService = new window.google.maps.DirectionsService();
 
-      let waypoints = null;
-      let origin = null;
-      let destination = null;
+      if (mapsObject) {
 
-      if (routers.length !== 0) {
-         waypoints = routers.map(route => ({
-            location: route.description,
-            stopover: true
-         }))
-         origin = { query: routers[0].description };
-         destination = { query: routers[routers.length - 1].description };
+         const directionsService = new window.google.maps.DirectionsService();
+         
+         if (!directionsDisplay.current) {
+            directionsDisplay.current = new window.google.maps.DirectionsRenderer();
+         }
+         console.log(mapsObject.map)
+         if (routers.length >= 2) {
+            
+            let waypoints = routers.map(route => ({
+               location: route.description,
+               stopover: true
+            }))
+            let origin = { query: routers[0].description };
+            let destination = { query: routers[routers.length - 1].description };
+
+            directionsDisplay.current.setMap(mapsObject.map);
+            directionsService.route(
+               {
+                  origin: origin,
+                  destination: destination,
+                  waypoints: waypoints && waypoints.slice(1, waypoints.length - 1),
+                  travelMode: window.google.maps.TravelMode.DRIVING
+               },
+               (result, status) => {
+                  if (status === window.google.maps.DirectionsStatus.OK) {
+                     directionsDisplay.current.setDirections(result);
+                  } else {
+                     console.error(`error fetching directions ${result}`);
+                  }
+               });
+         } else {
+
+            directionsDisplay.current.setMap(null);
+            mapsObject.map.setCenter({ lat: 53.9, lng: 27.56667 });
+
+         }
+
       }
 
-      DirectionsService.route({
-         origin: origin,
-         destination: destination,
-         waypoints: waypoints && waypoints.slice(1, waypoints.length - 1),
-         travelMode: window.google.maps.TravelMode.DRIVING
-      }, (result, status) => {
-         if (status === window.google.maps.DirectionsStatus.OK) {
-            setDirections(result);
-         } else {
-            console.error(`error fetching directions ${result}`);
-         }
-      });
-
-   }, [routers])
-
+   }, [routers, mapsObject])
+        
    return (
-      <GoogleMap
-         defaultZoom={10}
-         defaultCenter={new window.google.maps.LatLng({lat: 53.9, lng: 27.56667})}
-      >
-         {directions && <DirectionsRenderer directions={directions} />}
-      </GoogleMap>
+      <div style={{ width: '100%', height: '500px' }}>
+         <GoogleMapReact
+            defaultCenter={{ lat: 53.9, lng: 27.56667 }}
+            defaultZoom={10}
+            yesIWantToUseGoogleMapApiInternals
+            onGoogleApiLoaded={({ map, maps }) => {
+               setMapsObject({ map, maps });
+            }}>
+         </GoogleMapReact>
+      </div>
    )
 }
-);
-
+        
 export default MapWithADirectionsRenderer
-

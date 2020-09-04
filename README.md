@@ -1,3 +1,8 @@
+## Before npm start
+Create .env file in root directory and add 'REACT_APP_GOOGLE_API_KEY={there your api key}'<br />
+API that should be include in your google console dev: Places API, Maps JavaScript Api, Directions Api
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
