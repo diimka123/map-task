@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import GoogleMapReact from 'google-map-react';
 
-
 function Map({ routers }) {
 
    const [mapsObject, setMapsObject] = useState(null);
    const directionsDisplay = useRef(null);
 
    useEffect(() => {
+      const DirectionsService = new window.google.maps.DirectionsService();
 
       if (mapsObject) {
 
@@ -51,8 +51,7 @@ function Map({ routers }) {
       }
 
    }, [routers, mapsObject])
-
-
+        
    return (
       <div style={{ width: '100%', height: '500px' }}>
          <GoogleMapReact
@@ -65,7 +64,6 @@ function Map({ routers }) {
          </GoogleMapReact>
       </div>
    )
-
 }
-
-export default Map
+        
+export default MapWithADirectionsRenderer
