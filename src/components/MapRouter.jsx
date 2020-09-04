@@ -11,8 +11,8 @@ function MapRouter() {
 
    return (
       <Container maxWidth="md">
-         <Grid container spacing={2} style={{ marginTop: '50px'}}>
-            <Grid item xs={4}>
+         <Grid container spacing={2} justify="center" style={{ marginTop: '50px'}}>
+            <Grid item xs={10} sm={6} md={4}>
                <Paper elevation={3}>
                   <SearchLocation
                      routers={routers}
@@ -26,7 +26,7 @@ function MapRouter() {
                   />
                </Paper>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={10} md={8}>
                <Paper elevation={3}>
                   <Map 
                      routers={routers}
