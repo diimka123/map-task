@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import GoogleMapReact from 'google-map-react';
 
 
-
 function Map({ routers }) {
 
    const [mapsObject, setMapsObject] = useState(null);
