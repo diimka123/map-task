@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import GoogleMapReact from 'google-map-react';
 
-function Map({ routers }) {
+function MapWithADirectionsRenderer({ routers }) {
 
    const [mapsObject, setMapsObject] = useState(null);
    const directionsDisplay = useRef(null);
 
    useEffect(() => {
-      const DirectionsService = new window.google.maps.DirectionsService();
 
       if (mapsObject) {
 
@@ -16,7 +15,7 @@ function Map({ routers }) {
          if (!directionsDisplay.current) {
             directionsDisplay.current = new window.google.maps.DirectionsRenderer();
          }
-         console.log(mapsObject.map)
+
          if (routers.length >= 2) {
             
             let waypoints = routers.map(route => ({
